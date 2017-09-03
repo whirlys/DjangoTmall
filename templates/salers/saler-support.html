@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}商家中心{% endblock %}
+
+{% block searchBar %}
+{% endblock %}
+
+
+{% block content %}
+    <div class="jumbotron">
+        <div class="container">
+          <h1>天猫</h1>
+          <p>
+中国地标性的线上综合购物平台，拥有超1.2万国际品牌，18万知名大牌，8.9万品牌旗舰店。为日益成熟的中国消费者提供全球精选好货、无后顾之忧的好服务，致力于打造品质购物体验！</p>
+          <p><a class="btn btn-primary btn-lg" href="{% url 'salers:salerSettled' %}" role="button">商家入驻</a>&nbsp;&nbsp;
+              {% if request.user.is_saler %}
+              <a class="btn btn-primary btn-lg" href="{% url 'salers:manage' %}" role="button">进入我的商铺</a>
+              {% endif %}
+          </p>
+        </div>
+    </div>
+    <div style="min-width: 800px; margin: 0px auto;">
+        <img width="100%" src="{% static 'img/join.png' %}">
+    </div>
+{% endblock %}
+
+{% block footer1 %}
+{% endblock %}
+
+

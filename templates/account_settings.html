@@ -1,0 +1,29 @@
+{% extends 'ibase.html' %}
+{% block title %}账户设置{% endblock %}
+
+{% block content %}
+
+<section class="isettings-content">
+    <div class="ias-nav">
+        <div class="ias-avatar-box"><img id="user_avatar" src="{{ MEDIA_URL }}{{ request.user.avatar }}"> </div>
+        <span>帐号管理</span>
+        <ul>
+            <li><a href="#nowhere">安全设置</a></li>
+            <li><a href="{% url 'users:personalData' %}">个人资料 <span class="glyphicon glyphicon-ok"></span></a></li>
+            <li><a href="#nowhere">隐私设置</a></li>
+            <li><a href="#nowhere">个人成长信息</a></li>
+            <li><a href="#nowhere">支付宝绑定设置</a></li>
+            <li><a href="#nowhere">微博绑定设置</a></li>
+            <li><a href="#nowhere">个人交易记录</a></li>
+            <li><a href="{% url 'orders:deliveryAddress' %}">收货地址 <span class="glyphicon glyphicon-ok"></span></a></li>
+            <li><a href="#nowhere">网站提醒</a></li>
+            <li><a href="#nowhere">应用授权</a></li>
+            <li><a href="#nowhere">分享绑定</a></li>
+        </ul>
+    </div>
+    <div class="ias-main">
+        {% block iasmain %}{% endblock %}
+    </div>
+</section>
+
+{% endblock %}

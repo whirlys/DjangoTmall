@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+
+{% block title %}等待审核{% endblock %}
+{% block custom_css %}
+    <style>
+        div.wait{
+            min-height: 400px;
+            min-width: 700px;
+            margin: 0px auto;
+        }
+    </style>
+{% endblock %}
+{% block searchBar %}
+{% endblock %}
+
+{% block content %}
+    <div class="wait">
+        <h1>您的商家入驻申请已提交，正在等待审核!</h1>
+    </div>
+
+{% endblock %}
+
+{% block footer1 %}
+{% endblock %}

@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block custom_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+{% endblock %}
+
+{% block custom_js %}
+{#<script src="{% static 'js/base.js' %}"></script>#}
+{% endblock %}
+
+
+{% block content %}
+
+
+    <div class="homepageDiv">
+
+
+
+<img src="{% static 'img/site/catear.png' %}" id="catear" class="catear"/>
+
+<div class="categoryWithCarousel">
+
+<div class="headbar show1">
+    <div class="head ">
+
+        <span style="margin-left:10px" class="glyphicon glyphicon-th-list"></span>
+        <span style="margin-left:10px" >商品分类</span>
+
+    </div>
+
+    <div class="rightMenu">
+        <span><a href="#nowhere"><img src="{% static 'img/site/chaoshi.png' %}"/></a></span>
+        <span><a href="#nowhere"><img src="{% static 'img/site/guoji.png' %}"/></a></span>
+
+                <span>
+                <a href="#nowhere">
+                    平板电视
+                </a></span>
+
+                <span>
+                <a href="#nowhere">
+                    马桶
+                </a></span>
+
+                <span>
+                <a href="#nowhere">
+                    沙发
+                </a></span>
+
+                <span>
+                <a href="#nowhere">
+                    电热水器
+                </a></span>
+
+    </div>
+
+</div>
+
+<div style="position: relative">
+
+<div class="categoryMenu">
+        {% for category in categorys %}
+            <div cid="{{ category.id }}" class="eachCategory">
+                <span class="glyphicon glyphicon-link"></span>
+                <a href="{% url 'products:category' %}?cid={{ category.id }}">
+                    {{ category.category_name }}
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div style="position: relative;left: 0;top: 0;">
+
+<script>
+$(function(){
+    $("div.productsAsideCategorys div.row a").each(function(){
+        var v = Math.round(Math.random() *6);
+        if(v == 1)
+            $(this).css("color","#87CEFA");
+    });
+});
+
+</script>
+
+    {% for category in categorys %}
+
+    <div cid="{{ category.id }}" class="productsAsideCategorys">
+        <div class="row show1">
+            {% for product in category.products.all %}
+                 <a href="{% url 'products:product' %}?pid={{ product.id }}">
+                     {{ product.product_name }}
+                 </a>
+                {% if forloop.counter|divisibleby:'4' %}
+                    <br>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    {% endfor %}
+
+</div>
+
+<div id="carousel-of-product"  class="carousel-of-product carousel slide1" data-ride="carousel">
+  <!-- Indicators -->
+  <ol class="carousel-indicators">
+    <li data-target="#carousel-of-product" data-slide-to="0" class="active"></li>
+    <li data-target="#carousel-of-product" data-slide-to="1"></li>
+    <li data-target="#carousel-of-product" data-slide-to="2"></li>
+    <li data-target="#carousel-of-product" data-slide-to="3"></li>
+  </ol>
+
+  <!-- Wrapper for slides -->
+  <div class="carousel-inner" role="listbox">
+    <div class="item active">
+      <img class="carousel carouselImage" src="{% static 'img/lunbo/1.jpg' %}" >
+    </div>
+    <div class="item">
+      <img  class="carouselImage" src="{% static 'img/lunbo/2.jpg' %}" >
+    </div>
+    <div class="item">
+        <img  class="carouselImage" src="{% static 'img/lunbo/3.jpg' %}" >
+    </div>
+
+    <div class="item">
+        <img  class="carouselImage" src="{% static 'img/lunbo/4.jpg' %}" >
+    </div>
+
+  </div>
+
+  <!-- Controls -->
+<!--   <a class="left carousel-control" href="#carousel-of-product" role="button" data-slide="prev"> -->
+<!--     <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> -->
+
+<!--   </a> -->
+<!--   <a class="right carousel-control" href="#carousel-of-product" role="button" data-slide="next"> -->
+<!--     <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> -->
+
+<!--   </a> -->
+
+</div>
+
+<div class="carouselBackgroundDiv">
+</div>
+
+</div>
+
+
+<div class="homepageCategoryProducts">
+
+        {% for category in categorys %}
+            <div class="eachHomepageCategoryProducts">
+                <div class="left-mark"></div>
+                <span class="categoryTitle">{{ category.category_name }}</span>
+                <div style="clear:both"></div>
+                    {% for product in category.products.all %}
+                        {% if forloop.counter0 < 5 %}
+                        <div class="productItem" >
+                            <a href="{% url 'products:product' %}?pid={{ product.id }}"><img width="100px" src="{{ MEDIA_URL }}{{ product.productImages.all.first.image }}"></a> {# img/productSingle_middle/676.jpg #}
+                            <a class="productItemDescLink" href="{% url 'products:product' %}?cid={{ product.id }}">
+                                <span class="productItemDesc">[热销]
+                                {{ product.product_name }}
+                                </span>
+                            </a>
+                            <span class="productPrice">
+                                {{ product.price }}
+                            </span>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+
+                <div style="clear:both"></div>
+            </div>
+
+    {% endfor %}
+
+    <img id="endpng" class="endpng" src="{% static 'img/site/end.png' %}">
+
+</div>
+</div>
+
+
+    <script>
+$(function(){
+    $("div.eachCategory").mouseenter(function(){
+        var cid = $(this).attr("cid");
+        $("div.productsAsideCategorys[cid="+cid+"]").show();
+    });
+    $("div.eachCategory").mouseleave(function(){
+        var cid = $(this).attr("cid");
+        $("div.productsAsideCategorys[cid="+cid+"]").hide();
+
+    });
+
+    $("div.productsAsideCategorys").mouseenter(function(){
+        $(this).show();
+    });
+
+    $("div.productsAsideCategorys").mouseleave(function(){
+        $(this).hide();
+    });
+
+    $("div.rightMenu span").mouseenter(function(){
+        var left = $(this).position().left;
+        var top = $(this).position().top;
+        var width = $(this).css("width");
+        var destLeft = parseInt(left) + parseInt(width)/2;
+        $("img#catear").css("left",destLeft);
+        $("img#catear").css("top",top-20);
+        $("img#catear").fadeIn(500);
+
+    });
+    $("div.rightMenu span").mouseleave(function(){
+        $("img#catear").hide();
+    });
+
+    var left = $("div#carousel-of-product").offset().left;
+    $("div.categoryMenu").css("left",left-20);
+    $("div.categoryWithCarousel div.head").css("margin-left",left);
+    $("div.productsAsideCategorys").css("left",left-20);
+
+});
+</script>
+{% endblock %}

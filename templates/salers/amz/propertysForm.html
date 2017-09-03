@@ -1,0 +1,157 @@
+{% extends 'salers/amz/base.html' %}
+{% load staticfiles %}
+{% block title %}添加产品属性{% endblock %}
+
+
+{% block content %}
+<div class="admin-biaogelist">
+
+    <div class="listbiaoti am-cf">
+      <ul class="am-icon-flag on"> 添加新产品的属性值</ul>
+
+      <dl class="am-icon-home" style="float: right;"> 当前位置： 首页 > <a href="#">添加新产品的属性值</a></dl>
+
+    </div>
+
+    <div class="fbneirong">
+        <h4>产品信息</h4>
+        <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
+            <thead>
+              <tr class="am-success">
+                    <th class="">类别</th>
+                    <th class="table-id">ID</th>
+                    <th class="">编码</th>
+                    <th class="">名称</th>
+                    <th class="">品牌</th>
+                    <th class="">原始价格</th>
+                    <th class="">价格</th>
+                    <th class="">进货成本</th>
+                    <th class="">上架/下架</th>
+                    <th class="">库存量</th>
+                    <th class="">是否包邮</th>
+                    <th class="">销量</th>
+                    <th class="table-date am-hide-sm-only">修改日期</th>
+                    <th width="" class="table-set">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+
+              <tr>
+                <td>{{ product.category }}</td>
+                <td>{{ product.id }}</td>
+                <td>{{ product.product_code }}</td>
+                <td>{{ product.product_name }}</td>
+               <td>{{ product.brand }}</td> {# <i class="am-icon-check am-text-warning"></i>#}
+                <td >{{ product.original_price }}</td>
+                  <td>{{ product.price }}</td>
+                  <td>{{ product.cost }}</td>
+                <td>{{ product.get_publish_status_display }}</td>
+                <td>{{ product.stock }}</td>
+                <td>{{ product.is_freeShipping }}</td>
+                <td >{{ product.sales }}</td>
+                <td >{{ product.updated }}</td>
+                <td><div class="am-btn-toolbar">
+                    <div class="am-btn-group am-btn-group-xs">
+                      <button class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"><span class="am-icon-pencil-square-o"></span></button>
+                      <button class="am-btn am-btn-default am-btn-xs am-text-danger am-round"><span class="am-icon-trash-o"></span></button>
+                    </div>
+                  </div></td>
+              </tr>
+
+            </tbody>
+          </table>
+
+
+        <hr>
+        <h3>填写产品属性值</h3>
+    <form class="am-form" >
+        {% for propertyvalue in product.propertyValues.all %}
+
+          {% csrf_token %}
+            <div class="am-form-group am-cf">
+                  <div class="zuo" pvid="{{ propertyvalue.id }}">{{ propertyvalue.property.name }}</div>：
+                  <div class="you">
+                        <input pvid="{{ propertyvalue.id }}" pid="{{ product.id }}"  class="propertyvalue" value="{{ propertyvalue.value }}" type="text">
+                        <span class="tip" style="color: green;" pvid="{{ propertyvalue.id }}"></span>
+                  </div>
+            </div>
+
+            <hr>
+
+        {% endfor %}
+       </form>
+    <div class="am-form-group am-cf">
+          <div class="you" style="margin-left: 11%;">
+{#              <button type="submit" class="am-btn am-btn-success am-radius">发布并关闭窗口</button>&nbsp;  &raquo; &nbsp; #}
+              <button pid="{{ product.id }}" id="submit" class="am-btn am-btn-secondary am-radius">发布</button>
+          </div>
+        </div>
+    </div>
+
+<script>
+$(document).on('ready', function() {
+    function checknull() {
+        var hasnull = false;
+        $("input.propertyvalue").each(function () {
+            var value  = $(this).val();
+            if(value == ''){
+                hasnull = true;
+                return true;
+            }
+        });
+
+        return hasnull;
+    }
+
+    $('#submit').click(function(){
+        var hasnull = checknull();
+        if(hasnull == true){
+            alert("请填完所有属性值！");
+            return false;
+        }
+
+        var pid = $(this).val();
+
+        $("input.propertyvalue").each(function () {
+            var value  = $(this).val();
+            var pvid = $(this).attr('pvid');
+            var pid = $(this).attr('pid');
+
+            $.ajax({
+                url:"{% url 'salers:propertys' %}",
+                type:"POST",
+                data:{
+                    "pid":pid,
+                    "pvid":pvid,
+                    "value":value,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                cache:false,
+                dataType:'json',
+                success:function(data){
+                    var span = $("span.tip[pvid="+ pvid +"]");
+                    if(data['status']=='no'){
+                        span.css('color','red');
+                        span.val($("div.zuo[pvid="+ pvid +"]").val() + " 属性上传失败！");
+                    }else{
+                        span.css('color','green');
+                        span.html('上传成功！');
+                    }
+
+                },
+                error:function () {
+                    alert("ajax出错！")
+                }
+            });
+        });
+
+
+    });
+
+
+});
+</script>
+
+</div>
+
+{% endblock %}

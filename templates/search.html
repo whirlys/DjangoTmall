@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}搜索结果{% endblock %}
+
+{% block content %}
+<div id="searchResult">
+
+	<div class="searchResultDiv">
+
+<div class="searchProducts">
+
+		<div class="productUnit" price="10560.0">
+			<a href="#nowhere">
+				<img class="productImage" src="img/productSingle/1456.jpg">
+			</a>
+			<span class="productPrice">¥10,560.00</span>
+			<a class="productLink" href="#nowhere">
+			 雅居汇欧式真皮沙发实木高档简约大户型客厅皮艺沙发组合美式沙发
+			</a>
+
+			<a class="tmallLink" href="#nowhere">天猫专卖</a>
+
+			<div class="show1 productInfo">
+				<span class="monthDeal ">月成交 <span class="productDealNumber">24笔</span></span>
+				<span class="productReview">评价<span class="productReviewNumber">19</span></span>
+				<span class="wangwang"><img src="{% static 'img/site/wangwang.png' %}"></span>
+			</div>
+
+		</div>
+
+
+		<div style="clear:both"></div>
+</div>
+	</div>
+
+</div>
+{% endblock %}

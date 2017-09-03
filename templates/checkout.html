@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+{% block title %}提交订单{% endblock %}
+{% block searchBar %}{% endblock %}
+
+{% block content %}
+
+
+<div class="buyPageDiv">
+  <form action="{% url 'orders:payment' %}" method="post">
+    {% csrf_token %}
+	<div class="buyFlow">
+		<img class="pull-left" src="{% static 'img/site/simpleLogo.png' %}">
+		<img class="pull-right" src="{% static 'img/site/buyflow.png' %}">
+		<div style="clear:both"></div>
+	</div>
+	<div class="address">
+		<div class="addressTip">选择收货地址</div>
+		<div class="select-address">
+            <input hidden="hidden" name="daid" value="" id="daid">
+            {% for address in dAddress %}
+                <div class="address-item {% if address.is_default %}aselected{% endif %}" data-id="{{ address.id }}">
+                    <p>{{ address.province }} <b>{{ address.city }}</b>&nbsp;&nbsp;&nbsp;&nbsp;（<b>{{ address.receiver }}</b> 收）</p>
+
+                    <p>{{ address.town }}&nbsp;&nbsp;&nbsp;{{ address.address }} {{ address.phoneNumber }}</p>
+                </div>
+                {% if address.is_default  %}
+                    <script>
+                        $("#daid").val({{ address.id }});
+                    </script>
+                {% endif %}
+            {% endfor %}
+
+            <div style="clear: both;"></div>
+
+            <div>
+                <a href="{% url 'orders:deliveryAddress' %}" class="btn btn-default btn-sm">使用新地址</a>
+                <a href="{% url 'orders:deliveryAddress' %}" class="pull-right">管理收货地址</a>
+            </div>
+		</div>
+	</div>
+    <script>
+        $("div.address-item").click(function () {
+            $("div.address-item").each(function () {
+                $(this).removeClass('aselected');
+            });
+            $(this).addClass('aselected');
+            var id= $(this).data('id');
+            $("#daid").val(id);
+        });
+
+    </script>
+    <hr>
+	<div class="productList">
+		<div class="productListTip">确认订单信息</div>
+
+		<table class="productListTable">
+			<thead>
+				<tr>
+					<th colspan="2" class="productListTableFirstColumn">
+						<img class="tmallbuy" src="{% static 'img/site/tmallbuy.png' %}">
+						<a class="marketLink" href="#nowhere">店铺：天猫店铺</a>
+						<a class="wangwanglink" href="#nowhere"> <span class="wangwangGif"></span> </a>
+					</th>
+					<th>单价</th>
+					<th>数量</th>
+					<th>小计</th>
+					<th>配送方式</th>
+				</tr>
+				<tr class="rowborder">
+					<td  colspan="2" ></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+			</thead>
+			<tbody class="productListTableTbody">
+                {% for cart in carts %}
+                    <input value="{{ cart.id }}" hidden="hidden" name="cid">
+                    {% with product=cart.product %}
+					<tr class="orderItemTR">
+						<td class="orderItemFirstTD"><img class="orderItemImg" src="{{ MEDIA_URL }}{{ product.productImages.all.first }}"></td>
+						<td class="orderItemProductInfo">
+						<a  href="#nowhere" class="orderItemProductLink">
+							{{ product.subTitle }}
+						</a>
+
+							<img src="{% static 'img/site/creditcard.png' %}" title="支持信用卡支付">
+							<img src="{% static 'img/site/7day.png' %}" title="消费者保障服务,承诺7天退货">
+							<img src="{% static 'img/site/promise.png' %}" title="消费者保障服务,承诺如实描述">
+
+						</td>
+						<td>
+
+						<span class="orderItemProductPrice">￥{{ product.price }}</span>
+						</td>
+						<td>
+						<span class="orderItemProductNumber">{{ cart.amount }}</span>
+						</td>
+						<td><span class="orderItemUnitSum">
+						￥{% widthratio product.price 1 cart.amount %}
+						</span></td>
+
+						<td  class="orderItemLastTD">
+                            <label class="orderItemDeliveryLabel">
+                                <input type="radio" value="" checked="checked">
+                                普通配送
+                            </label>
+
+                            <select class="orderItemDeliverySelect" class="form-control">
+                                <option>快递 免邮费</option>
+                            </select>
+
+						</td>
+
+					</tr>
+                    {% endwith %}
+                {% endfor %}
+
+			</tbody>
+
+		</table>
+		<div class="orderItemSumDiv">
+			<div class="pull-left">
+				<span class="leaveMessageText">给卖家留言:</span>
+				<span>
+					<img class="leaveMessageImg" src="{% static 'img/site/leaveMessage.png' %}">
+				</span>
+				<span class="leaveMessageTextareaSpan">
+					<textarea name="userMessage" class="leaveMessageTextarea"></textarea>
+					<div>
+						<span>还可以输入200个字符</span>
+					</div>
+				</span>
+			</div>
+
+			<span class="pull-right">店铺合计(含运费): ￥{{ total_money }}</span>
+		</div>
+
+	</div>
+
+	<div class="orderItemTotalSumDiv">
+		<div class="pull-right">
+			<span>实付款：</span>
+			<span class="orderItemTotalSumSpan">￥{{ total_money }}</span>
+		</div>
+	</div>
+
+	<div class="submitOrderDiv">
+			<button id="submitBtn" type="submit" class="submitOrderButton">提交订单</button>
+	</div>
+  <script>
+      $('#submitBtn').click(function () {
+          var daid = $('#daid').val();
+          if(daid == ''){
+              alert('还没有选择收货地址呢！');
+              return false;
+          }
+      });
+  </script>
+  </form>
+
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+	<title>{% block title %}我的淘宝{% endblock %}</title>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+    <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+
+{# 引用css资源文件 #}
+{% block custom_css %}{% endblock %}
+{# 引用js资源文件 #}
+{% block custom_js %}{% endblock %}
+</head>
+<body>
+{% include 'header.html' %}
+
+    <div class="iheader">
+        <a class="ilogo" title="我的淘宝"><img src="{% static 'img/site/ilogo.png' %}"> </a>
+        <ul>
+            <li><a href="{% url 'users:itaobao' %}">首页</a></li>
+            <li><a href="{% url 'users:accountSettings' %}">账户设置</a></li>
+            <li><a href="{% url 'users:notifications' %}">消息</a></li>
+        </ul>
+
+        <div class="isearch pull-right" >
+            <input >
+            <a href="#nowhere">搜索</a>
+        </div>
+
+    </div>
+
+{% block content %}
+
+{% endblock %}
+
+{% include 'footer.html' %}
+</body>
+</html>

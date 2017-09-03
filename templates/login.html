@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+	<title>{% block title %}仿天猫-登录{% endblock %}</title>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+    <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+
+</head>
+<body>
+
+<div id="loginDiv">
+	<div class="simpleLogo">
+        <a href="{% url 'index' %}">
+		    <img src="{% static 'img/site/simpleLogo.png' %}">
+        </a>
+	</div>
+	<img src="{% static 'img/site/loginBackground.png' %}" class="loginBackgroundImg" id="loginBackgroundImg">
+		<div class="loginSmallDiv" id="loginSmallDiv">
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="login_acount_text">账户登录</div>
+                {% if MSG %}
+                    <p style="color:red;">{{ MSG }}</p>
+
+                {% endif %}
+                <div class="loginInput ">
+                    <span class="loginInputIcon ">
+                        <span class=" glyphicon glyphicon-user"></span>
+                    </span>
+                    <input type="text" placeholder="手机/会员名/邮箱" name="username" id="name">
+                </div>
+                <div class="loginInput ">
+                    <span class="loginInputIcon ">
+                        <span class=" glyphicon glyphicon-lock"></span>
+                    </span>
+                    <input type="password" placeholder="密码" name="password" id="password">
+                </div>
+                <div>
+                    <a href="#nowhere" class="notImplementLink">忘记登录密码</a>
+                    <a class="pull-right" href="{% url 'regist' %}">免费注册</a>
+                </div>
+                <div style="margin-top:20px">
+                    <button type="submit" class="btn btn-block redButton">登录</button>
+                </div>
+            </form>
+		</div>
+</div>
+
+{% include 'footer.html' %}
+</body>
+</html>

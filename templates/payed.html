@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}订单已支付{% endblock %}
+
+{% block content %}
+<div class="payedDiv">
+	<div class="payedTextDiv">
+		<img src="{% static 'img/site/paySuccess.png' %}">
+		<span>您的订单已支付，不需重复支付！</span>
+
+	</div>
+	<div class="payedAddressInfo">
+
+		<div class="paedCheckLinkDiv">
+			您可以
+			<a class="payedCheckLink" href="#nowhere">查看已买到的宝贝</a>
+			<a class="payedCheckLink" href="#nowhere">查看交易详情 </a>
+		</div>
+
+	</div>
+
+	<div class="payedSeperateLine">
+	</div>
+
+	<div class="warningDiv">
+		<img src="{% static 'img/site/warning.png' %}">
+		<b>安全提醒：</b>下单后，<span class="redColor boldWord">用QQ给您发送链接办理退款的都是骗子！</span>天猫不存在系统升级，订单异常等问题，谨防假冒客服电话诈骗！
+	</div>
+
+</div>
+
+
+{% endblock %}

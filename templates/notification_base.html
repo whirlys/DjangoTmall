@@ -1,0 +1,28 @@
+{% extends 'ibase.html' %}
+{% load staticfiles%}
+
+{% block title %}消息提醒{% endblock %}
+
+{% block content %}
+<div class="notification-div">
+    <div class="notification-nav">
+        <span>服务消息</span>
+        <ul>
+            <li><a href="{% url 'users:logistics' %}">淘宝物流</a></li>
+        </ul>
+
+         <span>互动消息</span>
+         <ul>
+            <li><a href="#nowhere">评论</a></li>
+            <li><a href="#nowhere">私信</a></li>
+            <li><a href="#nowhere">提到我</a></li>
+            <li><a href="#nowhere">互动提醒</a></li>
+         </ul>
+        <a href="">设置</a>
+    </div>
+    <div class="notification-main">
+        {% block noti-content %}
+
+        {% endblock %}
+</div>
+{% endblock %}

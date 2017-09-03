@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load  staticfiles %}
+
+{% block title %}支付{% endblock %}
+
+{% block searchBar %}{% endblock %}
+
+{% block content %}
+<div class="aliPayPageDiv">
+	<div class="aliPayPageLogo">
+		<img class="pull-left" src="{% static 'img/site/simpleLogo.png' %}">
+		<div style="clear:both"></div>
+	</div>
+
+	<div>
+		<span class="confirmMoneyText">扫一扫付款（元）</span>
+		<span class="confirmMoney">
+		￥{{ total_money }}</span>
+
+	</div>
+	<div>
+		<img class="aliPayImg" src="{% static 'img/site/alipay2wei.png' %}">
+	</div>
+
+	<div>
+		<button id="pay-button" class="confirmPay">确认支付</button>
+	</div>
+
+</div>
+<script>
+    $('#pay-button').click(function () {
+        $.ajax({
+            url:"{% url 'orders:pay' %}",
+            type:"POST",
+            data:{
+                "oid":{{ oid }},
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            cache:false,
+            dataType:'json',
+            success:function(data){
+                if(data['status']=='ok'){
+                    location.href = "{% url 'orders:paySuccess' %}?oid={{ oid }}";
+                }else if(data['status']=='no'){
+                    $.toast({
+                                heading: '消息',
+                                text: data['reason'],
+                                position: 'mid-center',
+                                stack: false,
+                                showHideTransition: 'slide',
+                                allowToastClose: true,
+                                icon: 'error'
+                    })
+                }
+
+            },
+            error:function(){
+                        alert("异常！");
+                    }
+        })
+    });
+</script>
+{% endblock %}

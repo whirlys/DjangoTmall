@@ -1,0 +1,337 @@
+{% extends 'account_settings.html' %}
+{% load staticfiles %}
+{% block custom_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/cropper.min.css' %}">
+<script src="{% static 'js/cropper.min.js' %}"></script>
+    <script src="{% static 'js/jquery.cookie.js' %}"></script>
+
+<style>
+    /*头像编辑*/
+.avatar-wrapper {
+  height: 370px;
+  width: 100%;
+  margin-top: 15px;
+  box-shadow: inset 0 0 5px rgba(0,0,0,.25);
+  background-color: #fcfcfc;
+  overflow: hidden;
+}
+
+.avatar-wrapper img { display: block; height: auto; max-width: 100%;}
+
+/*头像预览*/
+.avatar-preview {
+  margin-top: 15px;
+  margin-right: 15px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  background-color: #fff;
+  overflow: hidden;
+  height: 96px;
+  width: 96px;
+}
+
+.avatar-preview:hover { border-color: #ccf; box-shadow: 0 0 5px rgba(0,0,0,.15);}
+</style>
+{% endblock %}
+{% block iasmain %}
+    <div class="iam-main-title">个人资料</div>
+    <div class="iam-main-second-title">
+        <a  data-toggle="modal" data-target="#editAvatar">修改头像</a> |
+        <a href="#nowhere">修改邮箱</a>
+    </div>
+
+{#    {% if not userProfileForm %}#}
+{##}
+{#    {% elif userProfileForm.has_error %}#}
+{#        <div class="alert alert-danger" role="alert">个人信息修改失败！</div>#}
+{#        {{ userProfileForm.errors }}#}
+{#    {% else %}#}
+{#         <div class="alert alert-success" role="alert">个人信息修改成功！</div>#}
+{#    {% endif %}#}
+
+    <form action="" method="post">
+    {% csrf_token %}
+    <div class="iam-mian-data">
+
+        <p>亲爱的 <b>{% if request.user.nick_name %}{{ request.user.nick_name }}{% else %}{{ request.user.username }}{% endif %}</b> ，填写真实的资料，有助于好友找到你哦。</p>
+        <div>
+            <span>当前头像：</span>
+            <img id="user_avatar2" width="100px" height="100px" src="{{ MEDIA_URL }}{{ request.user.avatar }}">
+        </div>
+        <div>
+            <span>用户名：</span>
+            <span>{{ request.user.username }}</span>
+        </div>
+        <div>
+            <span>邮箱：</span>
+            <span>{{ request.user.email }}</span>
+        </div>
+        <div>
+            <span>昵称：</span>
+            <input name="nick_name" type="text" value="{{ request.user.nick_name }}">
+        </div>
+
+    `   <div>
+            <span>手机号码：</span>
+            <input type="text" name="mobile" value="{{ request.user.mobile }}">
+        </div>
+        <div>
+            <span>性别：</span>
+            <input type="radio" value="male" name="gender" {% if request.user.gender == 'male' %}checked{% endif %}>男
+            <input type="radio" value="female" name="gender" {% if request.user.gender == 'female' %}checked{% endif %}>女
+        </div>
+        <div>
+            <span>生日：</span>
+            <input type="date" name="birthday" value="{% if request.user.birthday != '' %}{{ request.user.birthday|date:'Y-m-d' }}{% endif %}">
+        </div>
+        <div>
+            <span>居住地：</span>
+            <input type="text" name="address" value="{{ request.user.address }}">
+        </div>
+        <div>
+            <span>证件类型：</span>
+            <select name="identityCardType">
+                  <option value ="IDCard"  {% if request.user.identityCardType == 'IDCard' %}selected="selected"{% endif %}>身份证</option>
+                  <option value ="passport" {% if request.user.identityCardType == 'passport' %}selected="selected"{% endif %}>护照</option>
+            </select>
+        </div>
+        <div>
+            <span>证件号码：</span>
+            <input type="text" name="identityCardNo" value="{{ request.user.identityCardNo }}">
+        </div>
+        <hr>
+        <button type="submit">保存</button>
+        <hr>
+    </div>
+    </form>
+    <script>
+    function myDateFormat(mydate){
+        var year = mydate.substr(0,3);
+        var month = mydate.sub(5,6);
+        var day = mydate.substr(7,8);
+        return year+"-"+month+"-"+day;
+    }
+    </script>
+
+
+    <!-- Modal -->
+    <div class="modal fade"  id="editAvatar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document" style="width:900px">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel"><h2>上传新头像</h2></h4>
+          </div>
+          <div class="modal-body">
+
+              <div class="row avatar_crop">
+                    <div class="col-sm-8">
+                        <form id="avatar_form">
+                            {% csrf_token %}
+                            <!--操作区域-->
+                            <div class="avatar-wrapper" id='avatar-wrapper'>
+                                <img src="">
+                            </div>
+
+                            <!--相关数据-->
+                            <div>
+                                <input type="hidden" id="avatar_x" name="avatar_x">
+                                <input type="hidden" id="avatar_y" name="avatar_y">
+                                <input type="hidden" id="avatar_width" name="avatar_width">
+                                <input type="hidden" id="avatar_height" name="avatar_height">
+                                <input type="hidden" id="avatar_online" name="avatar_online">
+                            </div>
+
+                            <!--按钮组-->
+                            <div class="avatar-btns" style="margin-top: 0.5em;">
+                                <div class="btn-group">
+                                    <label class="btn btn-primary" for="avatar-input">本地图片</label>
+                                    <input style="display:none" type="file" class="avatar-input" id="avatar-input" name="avatar_file" accept=".jpg,.jpeg,.png">
+
+                                </div>
+
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-primary disabled" id="zoom-in" title="放大">
+                                        <span class="glyphicon glyphicon-zoom-in"></span>
+                                    </button>
+
+                                    <button type="button" class="btn btn-primary disabled" id="zoom-out" title="缩小">
+                                        <span class="glyphicon glyphicon-zoom-out"></span>
+                                    </button>
+
+                                    <button type="button" class="btn btn-primary disabled" id="reset" title="复位">
+                                        <span class="glyphicon glyphicon-refresh"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <div id="tip-text"></div>
+                        <br>
+                        <div class="avatar-preview"><img style="width: 96px; height: 96px;" src="{{ MEDIA_URL }}{{ request.user.avatar }}"></div>
+                        <a id="avatar-upload"  class="btn btn-primary disabled">上传头像</a>
+
+                    </div>
+                </div>
+            </div>
+
+
+          </div>
+          <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+    $(function(){
+            //初始化裁剪器
+            var image = $('#avatar-wrapper img');
+            image.cropper({
+                checkImageOrigin: true, //检查图片来源
+                dragMode: 'move',   //图片可移动
+                restore:false,      //窗体调整大小之后不自动恢复裁剪区域
+                zoomOnWheel: false, //不允许通过鼠标滚轮缩放
+                zoomOnTouch: false, //不允许通过触摸缩放
+                aspectRatio: 1 / 1, //裁剪比例
+                autoCropArea: 0.5,  //裁剪背景透明度
+                autoCropArea: 1,    //自动裁剪的比例
+                preview: $(".avatar-preview").selector, //文本的jQuery选择表达式，一个div
+                crop: function (e) {
+                    $('#avatar_x').val(e.x);
+                    $('#avatar_y').val(e.y);
+                    $('#avatar_width').val(e.width);
+                    $('#avatar_height').val(e.height);
+                },
+            });
+
+            //选择图片
+            function choose_local_img(){
+                var URL = window.URL || window.webkitURL;
+                if(URL){
+                    var files = this.files;
+                    if (files && files.length){
+                        var file = files[0];
+                        if (/^image\/\w+$/.test(file.type)) {
+                          var blobURL = URL.createObjectURL(file);
+                          image.cropper('reset').cropper('replace', blobURL);
+                          $('.avatar_crop .disabled').removeClass('disabled');
+                          normal_tip('本地图片：可调整到最佳状态再上传');
+
+                          $("#avatar_online").val(''); //去掉在线图片数据
+                        } else {
+                          error_tip('请选择一张图片');
+                        }
+                    }
+                }
+            }
+            $("#avatar-input").bind('change', choose_local_img); //绑定事件
+
+            //在线图片
+            $('#online-img').click(function(){
+                normal_tip('在线图片：捏脸和歪脖系列头像，萌不');
+                $(".avatar-online-modal").modal('show');
+            });
+            //选择在线图片
+            $(".avatar_online_img img").click(function(){
+                $(".avatar-online-modal").modal('hide');
+
+                //设置在线图片
+                var path = $(this).attr('src');
+                image.cropper('replace', path);
+                $("#avatar_online").val(path);
+                $('.avatar_crop .disabled').removeClass('disabled');
+
+                //移除本地图片选择
+                var file = $("#avatar-input")
+                file.after(file.clone().val(""));
+                file.remove();
+                $("#avatar-input").bind('change', choose_local_img); //绑定事件
+            });
+
+            //缩放按钮
+            var zoom = 1;
+            $("#zoom-in").click(function(){
+                if(zoom<1.5){
+                    zoom += 0.1;
+                    image.cropper("zoom", 0.1);
+                }
+            });
+            $("#zoom-out").click(function(){
+                if(zoom>0.5){
+                    zoom -= 0.1;
+                    image.cropper("zoom", -0.1);
+                }
+            });
+
+            //复位按钮
+            $('#reset').click(function(){
+                image.cropper("reset");
+                zoom = 1;
+            });
+
+            //csrf处理
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        var csrftoken = $.cookie('csrftoken');
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            //上传头像
+            $("#avatar-upload").click(function(){
+                if($('#avatar-wrapper img').attr('src')==''){
+                    error_tip('亲~ 你是不是忘记选择图片了');
+                    return false;
+                }
+
+                normal_tip("上传中，请稍等一下...");
+                var formData = new FormData($("#avatar_form")[0]);
+                $.ajax({
+                    url: "{% url 'users:avatar' %}",
+                    type: 'POST',
+                    data: formData,
+                    async: false,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (data){
+                        if(data['success']){
+                            normal_tip("上传头像成功");
+                            $('#user_avatar').attr('src', '/' + data['avatar_url']); //更新头像
+                            $('#user_avatar2').attr('src', '/' + data['avatar_url']); //更新头像
+                        }else{
+                            error_tip("提交失败，请重试！");
+                        }
+                    },
+                    error: function (err) {
+                        error_tip("提交失败，请重试！" + err);
+                    }
+                });
+                return false;
+            });
+
+            //提示
+            function error_tip(text){
+                $('#tip-text').removeClass();
+                $('#tip-text').addClass('alert alert-danger');
+                $('#tip-text').text(text);
+            }
+            function normal_tip(text){
+                $('#tip-text').removeClass();
+                $('#tip-text').addClass('alert alert-success');
+                $('#tip-text').text(text);
+
+            }
+        });
+    </script>
+{% endblock %}

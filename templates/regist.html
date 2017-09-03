@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}仿天猫-注册{% endblock %}
+
+{% block searchBar %}
+    {% include 'singleSearchBar.html' %}
+{% endblock %}
+
+
+{% block content %}
+{% if registSuccess %}
+    <div class="registerSuccessDiv">
+
+		<img src="{% static 'img/site/registerSuccess.png' %}">
+			恭喜注册成功
+    </div>
+{% else %}
+<div class="registerDiv">
+    <div class=""></div>
+    <form action="" method="post">
+        <table align="center" class="registerTable">
+            <tbody><tr>
+                <td class="registerTip registerTableLeftTD">Django仿天猫-用户注册&nbsp;&nbsp;&nbsp;</td>
+                <td></td>
+
+            </tr>
+            <tr>
+                <td class="registerTableLeftTD">登录名</td>
+                <td class="registerTableRightTD"><input value="{{ form.username.value }}" class="{% if form.username.errors %}error_input{% endif %} " placeholder="会员名一旦设置成功，无法修改" name="username" id="name"> </td>
+                {% if form.username.errors %}<td style="color: red">{{ form.username.errors }}</td>
+                {% else %}<td></td>
+                {% endif %}
+            </tr>
+             <tr>
+                <td class="registerTableLeftTD">邮箱</td>
+                <td class="registerTableRightTD"><input value="{{ form.email.value }}" type="email" class="{% if form.email.errors %}error_input{% endif %} " placeholder="设置你的邮箱" name="email" id="name"> </td>
+                {% if form.email.errors %}<td style="color: red">{{ form.email.errors }}</td>
+                {% else %}<td></td>
+                {% endif %}
+            </tr>
+
+            <tr>
+                <td class="registerTableLeftTD">登录密码</td>
+                <td class="registerTableRightTD"><input value="{{ form.password.value }}" class="{% if form.password.errors %}error_input{% endif %} " type="password" placeholder="设置你的登录密码" name="password" id="password"> </td>
+                {% if form.password.errors %}<td style="color: red">{{ form.password.errors }}</td>
+                {% else %}<td>至少输入6个字符</td>
+                {% endif %}
+
+            </tr>
+            <tr>
+                <td class="registerTableLeftTD">密码确认</td>
+                <td class="registerTableRightTD"><input value="{{ form.password2.value }}" class="{% if form.password2.errors %}error_input{% endif %} " type="password" placeholder="请再次输入你的密码" name="password2" id="repeatpassword"> </td>
+                {% if form.password2.errors %}<td style="color: red">{{ form.password2.errors }}</td>
+                {% else %}<td>至少输入6个字符</td>
+                {% endif %}
+            </tr>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td class="registerTableLeftTD">{{ form.captcha }}</td>
+                {% if form.captcha.errors %}<td style="color: red">{{ form.captcha.errors }}</td>{% endif %}
+            </tr>
+            <tr>
+                <td class="registerButtonTD" colspan="2">
+                    <a href="#nowhere"><button>提   交</button></a>
+                </td>
+            </tr>
+
+        </tbody></table>
+        {% csrf_token %}
+
+    </form>
+</div>
+{% endif %}
+{% endblock %}

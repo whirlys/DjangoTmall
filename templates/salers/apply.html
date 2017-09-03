@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+
+{% block title %}商家入驻{% endblock %}
+{% block custom_css %}
+<style>
+    .joinForm{
+        width: 700px;
+        margin: 0 auto;
+        padding: 20px;
+        min-height: 400px;
+    }
+    .joinForm form p{
+        margin-top: 25px;
+        margin-bottom: 30px;
+    }
+    .joinForm form p label{
+        min-width: 100px;
+    }
+    .joinForm form p input{
+        display: inline-block;
+        min-width: 300px;
+        height: 30px;
+        line-height: 25px;
+        font-size: 18px;
+        padding-left: 5px;
+    }
+    .joinForm form p textarea {
+        min-width: 300px;
+        height: 100px;
+        line-height: 25px;
+        font-size: 18px;
+        padding: 5px;
+    }
+
+    ul.errorlist{
+        padding: 0px;
+        list-style: none;
+        color: red;
+    }
+</style>
+{% endblock %}
+{% block searchBar %}
+{% endblock %}
+{% block content %}
+
+<div class="joinForm" >
+    {% if not success %}
+        <h1>填写商家入驻资料</h1>
+        <hr>
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ tmallShopForm.as_p }}
+            <button class="btn btn-default btn-lg" type="submit">提交入驻申请</button>
+        </form>
+    {% else %}
+        <h1>商家入驻资料提交成功，等待审核！</h1>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block footer1 %}
+{% endblock %}

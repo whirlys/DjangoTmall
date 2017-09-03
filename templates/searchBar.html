@@ -1,0 +1,35 @@
+{% load staticfiles %}
+    <a href="{% url 'index' %}">
+		<img id="logo" src="{% static 'img/site/logo.gif' %}" class="logo">
+	</a>
+<form  method="post" >
+		<div class="searchDiv">
+			<input name="keyword" type="text" placeholder="时尚男鞋  太阳镜 ">
+			<button  type="button" class="searchButton">搜索</button>
+			<div class="searchBelow">
+						<span>
+							<a href="#nowhere">
+								平衡车
+							</a>
+								<span>|</span>
+						</span>
+						<span>
+							<a href="#nowhere">
+								扫地机器人
+							</a>
+								<span>|</span>
+						</span>
+						<span>
+							<a href="#nowhere">
+								原汁机
+							</a>
+								<span>|</span>
+						</span>
+						<span>
+							<a href="#nowhere">
+								冰箱
+							</a>
+						</span>
+			</div>
+		</div>
+	</form>

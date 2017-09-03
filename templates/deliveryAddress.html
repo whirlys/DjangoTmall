@@ -1,0 +1,112 @@
+{% extends 'account_settings.html' %}
+{% load staticfiles %}
+
+{% block custom_css %}
+
+<script type="text/javascript" src="{% static 'js/address.js' %}"></script>
+{% endblock %}
+
+{% block iasmain %}
+
+    <div class="iam-main-title">收货地址</div>
+    <form action="{% if editAddress.id %}?daid={{ editAddress.id  }}{% endif %}" method="post">
+        {% csrf_token %}
+        <div class="iam-mian-data">
+            <p><span style="color: orangered;">新增收货地址</span>　电话号码、手机号选填一项, 其余均为必填项</p>
+            {% if not deliveryAddressForm %}
+
+            {% elif deliveryAddressForm.errors %}
+                <div class="alert alert-danger" role="alert">收货地址保存失败！表单未填完整！</div>
+
+            {% else %}
+                 <div class="alert alert-success" role="alert">收货地址保存成功！</div>
+            {% endif %}
+
+            <div>
+                <span>所在地区</span>
+                    <div id="address" style="margin: 50px auto auto 50px;">
+                        <select class="select" id="province" name="province">
+                            <option value="{{ editAddress.province }}">选择省份</option>
+                        </select>
+
+                        <select name="city" id="city">
+                            <option value="{{ editAddress.city }}">选择城市</option>
+                        </select>
+
+                        <select name="town" id="town">
+                            <option value="{{ editAddress.town }}">选择区域</option>
+                        </select>
+                    </div>
+
+            </div>
+            <div>
+                <span>详细地址</span>
+                <textarea  {% if editAddress.address.errors  %}class="error_input" {% endif %} name="address" placeholder="建议您如实填写详细的收货地址，例如街道名称，门牌号码，楼层和房间号等信息">{{ editAddress.address }}</textarea>
+            </div>
+            <div>
+                <span>邮政编码</span>
+                <input value="{{ editAddress.zip }}" {% if deliveryAddressForm.zip.errors  %}class="error_input" {% endif %}  name="zip" type="text" placeholder="如您不清楚邮递编号，请填写000000">
+            </div>
+            <div>
+                <span>收货人姓名</span>
+                <input name="receiver" value="{{ editAddress.receiver }}"  {% if deliveryAddressForm.receiver.errors  %}class="error_input" {% endif %}  type="text" placeholder="长度不超过25个字符">
+            </div>
+            <div>
+                <span>手机号码</span>
+                <input name="phoneNumber" value="{{ editAddress.phoneNumber }}" {% if deliveryAddressForm.phoneNumber.errors  %}class="error_input" {% endif %}  type="text" placeholder="手机号码">
+            </div>
+            <div>
+                <span></span>
+                {% if editAddress.is_default %}
+                    <input name="is_default"  value="True" checked type="checkbox"> 设置为默认收货地址
+                {% else %}
+                    <input name="is_default"  value="False" type="checkbox"> 设置为默认收货地址
+                {% endif %}
+            </div>
+            <hr>
+            <button type="submit">保存</button>
+
+    </div>
+    </form>
+	<script type="text/javascript">
+		$(function(){
+			$("#address").selectAddress()
+			$("#town").focusout(function(){
+				var province = $("#province option:selected").html()
+				var city = $("#city option:selected").html()
+				var town = $("#town option:selected").html()
+				if(province!= '选择省份' && city!="选择城市" && town!='选择区域'){
+					console.log('省份/直辖市：'+province+'\n城市:'+city+'\n区/县：'+town)
+				}
+			})
+		})
+	</script>
+
+    <div class="address-list ">
+        <p>已保存了2条地址，还能保存18条地址</p>
+        <table class="table">
+            <tr class="active">
+                <td>收货人</td>
+                 <td>所在地区</td>
+                 <td>详细地址</td>
+                 <td>邮编</td>
+                 <td>电话/手机</td>
+                 <td>操作</td>
+            </tr>
+            {% for address in deliveryAddress %}
+                <tr>
+                    <td>{{ address.receiver }}</td>
+                    <td>{{ address.province }} {{ address.city }} {{ address.town }}</td>
+                    <td>{{ address.address }}</td>
+                    <td>{{ address.zip }}</td>
+                    <td>{{ address.phoneNumber }}</td>
+                    <td><a href="?daid={{ address.id }}">修改</a> | <a href="?delete={{ address.id }}">删除</a> </td>
+                </tr>
+            {% endfor %}
+
+        </table>
+
+    </div>
+
+
+{% endblock %}

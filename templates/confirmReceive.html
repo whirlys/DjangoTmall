@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}确认收货{% endblock %}
+
+{% block content %}
+
+<div class="confirmPayPageDiv">
+	<div class="confirmPayImageDiv">
+		<img src="{% static 'img/site/comformPayFlow.png' %}">
+		<div  class="confirmPayTime1">
+			{{ order.created }}
+		</div>
+		<div  class="confirmPayTime2">
+			{{ order.pay_time }}
+		</div>
+		<div class="confirmPayTime3">
+            {{ order.deliver_time }}
+		</div>
+
+	</div>
+	<div class="confirmPayOrderInfoDiv">
+		<div class="confirmPayOrderInfoText">我已收到货，同意支付宝付款</div>
+	</div>
+	<div class="confirmPayOrderItemDiv">
+		<div class="confirmPayOrderItemText">订单信息</div>
+		<table class="confirmPayOrderItemTable">
+			<thead>
+				<th colspan="2">宝贝</th>
+				<th width="120px">单价</th>
+				<th width="120px">数量</th>
+				<th width="120px">商品总价 </th>
+				<th width="120px">运费</th>
+			</thead>
+            {% for orderitem in order.orderItems.all %}
+				<tr>
+					<td ><img width="50px" src="{{ MEDIA_URL }}{{ orderitem.product.productImages.first }}"></td>
+					<td class="confirmPayOrderItemProductLink">
+						<a href="{% url 'products:product' %}?pid={{ orderitem.product.id }}">{{ orderitem.product_name }}</a>
+					</td>
+					<td >￥{{ orderitem.product_price }}</td>
+					<td>{{ orderitem.product_num }}</td>
+                    {% if forloop.first %}
+                        <td rowspan="{{ order.get_orderitem_count }}"><span class="conformPayProductPrice">￥{{ order.amount }}</span></td>
+                        <td rowspan="{{ order.get_orderitem_count }}"><span>快递 ： {{ order.courier_amount }} </span></td>
+                    {% endif %}
+				</tr>
+            {% endfor %}
+		</table>
+
+		<div class="confirmPayOrderItemText pull-right">
+			实付款： <span class="confirmPayOrderItemSumPrice">￥{{ order.payment_money }}</span>
+		</div>
+
+	</div>
+	<div class="confirmPayOrderDetailDiv">
+
+		<table class="confirmPayOrderDetailTable">
+			<tr>
+				<td>订单编号：</td>
+				<td>{{ order.order_code }} <img width="23px" src="{% static 'img/site/confirmOrderTmall.png' %}"></td>
+			</tr>
+			<tr>
+				<td>卖家昵称：</td>
+				<td>{{ order.shop.shopName }} <span class="confirmPayOrderDetailWangWangGif"></span></td>
+			</tr>
+			<tr>
+				<td>收货信息： </td>
+				<td>{{ order.address }}，{{ order.receiver }}， {{ order.phoneNumber }} </td>
+			</tr>
+			<tr>
+				<td>成交时间：</td>
+				<td>{{ order.created }}</td>
+			</tr>
+		</table>
+
+	</div>
+	<div class="confirmPayButtonDiv">
+		<div class="confirmPayWarning">请收到货后，再确认收货！否则您可能钱货两空！</div>
+        <form action="" method="post">
+            {% csrf_token %}
+            <input name="oid" value="{{ order.id }}" hidden="hidden">
+		    <button type="submit" class="confirmPayButton">确认支付</button>
+        </form>
+	</div>
+</div>
+
+
+
+{% endblock %}

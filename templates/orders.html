@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}我的订单{% endblock %}
+
+{% block content %}
+
+
+<script>
+var deleteOrder = false;
+var deleteOrderid = 0;
+
+$(function(){
+	$("a[orderStatus]").click(function(){
+		var orderStatus = $(this).attr("orderStatus");
+		if('all'==orderStatus){
+			$("table[orderStatus]").show();
+		}
+		else{
+			$("table[orderStatus]").hide();
+			$("table[orderStatus="+orderStatus+"]").show();
+		}
+
+		$("div.orderType div").removeClass("selectedOrderType");
+		$(this).parent("div").addClass("selectedOrderType");
+	});
+
+	$("a.deleteOrderLink").click(function(){
+		deleteOrderid = $(this).attr("oid");
+		deleteOrder = false;
+		$("#deleteConfirmModal").modal("hide");
+	});
+
+	$("button.deleteConfirmButton").click(function(){
+		deleteOrder = true;
+		$("#deleteConfirmModal").modal('hide');
+	});
+
+	$('#deleteConfirmModal').on('hidden.bs.modal', function (e) {
+		if(deleteOrder){
+			var page="foredeleteOrder";
+			if(false)$.post(
+				    page,
+				    {"oid":deleteOrderid},
+				    function(result){
+						if("success"==result){
+							$("table.orderListItemTable[oid="+deleteOrderid+"]").hide();
+						}
+						else{
+							location.href="login.jsp";
+						}
+				    }
+				);
+
+		}
+	})
+{#    催卖家发货#}
+	$(".ask2delivery").click(function(){
+
+		var oid = $(this).attr('oid');
+		page = "{% url 'orders:urge' %}";
+		var obj = $(this);
+		$.ajax({
+			    url: page,
+                type:"POST",
+                dataType:'json',
+                data:{
+			        "oid":oid,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+			    success: function(data){
+			        if(data['status']=='ok'){
+			            alert("卖家将尽快发货!");
+			            obj.hide();
+                    }
+                    else{
+			            alert("异常");
+                    }
+			    },
+                error:function () {
+                    alert("异常");
+                }
+        });
+
+	});
+
+});
+
+</script>
+
+<div class="boughtDiv">
+	<div class="orderType">
+		<div class="selectedOrderType"><a orderStatus="all" href="#nowhere">所有订单</a></div>
+		<div><a  orderStatus="waitPay" href="#nowhere">待付款</a></div>
+		<div><a  orderStatus="waitDelivery" href="#nowhere">待发货</a></div>
+		<div><a  orderStatus="waitConfirm" href="#nowhere">待收货</a></div>
+		<div><a  orderStatus="waitReview" href="#nowhere" >待评价</a></div>
+        <div><a  orderStatus="completed" href="#nowhere" class="noRightborder">已完成</a></div>
+		<div class="orderTypeLastOne"><a class="noRightborder"> </a></div>
+	</div>
+	<div style="clear:both"></div>
+	<div class="orderListTitle">
+		<table class="orderListTitleTable">
+			<tr>
+				<td>宝贝</td>
+				<td width="100px">单价</td>
+				<td width="100px">数量</td>
+				<td width="120px">实付款</td>
+				<td width="100px">交易操作</td>
+			</tr>
+		</table>
+
+	</div>
+
+	<div class="orderListItem">
+        {% for order in orders %}
+			<table class="orderListItemTable" orderStatus="{% if order.order_status == '1' %}waitPay{% elif order.order_status == '2' %}waitDelivery{% elif order.order_status == '3' %}waitConfirm{% elif order.order_status == '4' %}waitReview{% elif order.order_status == '5' %}completed{% endif %}" oid="{{ order.id }}">
+				<tr class="orderListItemFirstTR">
+					<td colspan="2">
+					<b>{{ order.created }}</b>
+					<span>订单号: {{ order.order_code }}
+					</span>
+					</td>
+					<td  colspan="2"><img width="13px" src="{% static 'img/site/orderItemTmall.png' %}">天猫商场</td>
+					<td colspan="1">
+						<a class="wangwanglink" href="#nowhere">
+							<div class="orderItemWangWangGif"></div>
+						</a>
+
+					</td>
+					<td class="orderItemDeleteTD">
+						<a class="deleteOrderLink" oid="{{ order.id }}" href="#nowhere">
+							<span  class="orderListItemDelete glyphicon glyphicon-trash"></span>
+						</a>
+
+					</td>
+				</tr>
+                {% for orderitem in order.orderItems.all %}
+                    <tr class="orderItemProductInfoPartTR" >
+						<td class="orderItemProductInfoPartTD"><img width="80" height="80" src="{{ MEDIA_URL }}{{ orderitem.product.productImages.all.first }}"></td>
+						<td class="orderItemProductInfoPartTD">
+							<div class="orderListItemProductLinkOutDiv">
+								<a href="{% url 'products:product' %}?pid={{ orderitem.product.id }}">{{ orderitem.product_name }}</a>
+								<div class="orderListItemProductLinkInnerDiv">
+											<img src="{% static 'img/site/creditcard.png' %}" title="支持信用卡支付">
+											<img src="{% static 'img/site/7day.png' %}" title="消费者保障服务,承诺7天退货">
+											<img src="{% static 'img/site/promise.png' %}" title="消费者保障服务,承诺如实描述">
+								</div>
+							</div>
+						</td>
+						<td  class="orderItemProductInfoPartTD" width="100px">
+
+{#							<div class="orderListItemProductOriginalPrice">￥</div>#}
+							<div class="orderListItemProductPrice">￥{{ orderitem.product_price }}</div>
+
+						</td>
+
+							<td valign="top" rowspan="1" class="orderListItemNumberTD orderItemOrderInfoPartTD" width="100px">
+								<span class="orderListItemNumber">{{ orderitem.product_num }}</span>
+							</td>
+                            {% if forloop.counter == 1 %}
+                                <td valign="top" rowspan="{{ order.get_orderitem_count }}" width="120px" class="orderListItemProductRealPriceTD orderItemOrderInfoPartTD">
+                                    <div class="orderListItemProductRealPrice">￥{{ order.amount  }}</div>
+                                    <div class="orderListItemPriceWithTransport">运费：￥{{ order.courier_amount }}<br>优惠金额：￥{{ order.discount_amount }}<br>获得积分{{ order.order_point }}</div>
+                                </td>
+
+                                <td valign="top" rowspan="{{ order.get_orderitem_count }}" class="orderListItemButtonTD orderItemOrderInfoPartTD" width="100px">
+                                    {% if order.order_status == '1' %}
+                                        <span>未支付</span>
+                                        <a class="btn btn-warning btn-sm" href="{% url 'orders:gotopay' %}?oid={{ order.id }}">去付款</a>
+                                    {% elif order.order_status == '2' %}
+                                        <span>待发货</span>
+                                        <button class="btn btn-info btn-sm ask2delivery" oid="{{ order.id }}">催卖家发货</button>
+                                    {% elif order.order_status == '3' %}
+                                        <span>待收货</span>
+                                        <a class="btn btn-success btn-sm" href="{% url 'orders:confirmReceive' %}?oid={{ order.id }}">确认收货</a>
+                                    {% elif order.order_status == '4' %}
+                                        <a href="#nowhere">
+                                            <button  class="orderListItemReview">评价</button>
+                                        </a>
+                                    {% elif order.order_status == 5 %}
+                                        <span>已完成</span>
+                                    {% else %}
+                                        <span>未知状态{{ order.order_status }}</span>
+
+                                    {% endif %}
+
+                                </td>
+                            {% endif %}
+
+					</tr>
+                {% endfor %}
+			</table>
+
+        {% endfor %}
+	</div>
+
+        <div class="pagination">
+            <span class="step-links">
+                {% if orders.has_previous %}
+                    <a href="?page={{ orders.previous_page_number }}">上一页</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ orders.number }} of {{ orders.paginator.num_pages }}.
+                </span>
+
+                {% if orders.has_next %}
+                    <a href="?page={{ orders.next_page_number }}">下一页</a>
+                {% endif %}
+            </span>
+        </div>
+
+</div>
+{% endblock %}

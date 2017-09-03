@@ -1,0 +1,94 @@
+{% extends 'notification_base.html' %}
+{% load staticfiles %}
+
+{% block noti-content %}
+    <div class="notification-list">
+     {% for notification in notifications %}
+
+        <div class="notification-item panel  panel-default" nid="{{ notification.id }}">
+            <div class="panel-heading">消息来自：<b>{{ notification.actor.username }}</b>
+                &nbsp;&nbsp;{{ notification.timestamp }}&nbsp;&nbsp;<span class="status" nid="{{ notification.id }}">
+                {% if not notification.unread  %}<span class="label label-success">已读</span>
+                {% else  %} <span class="label label-warning">未读</span><span nid="{{ notification.id }}" class="read-notification label label-info">读取消息</span>{% endif %}</span>
+                <a class="pull-right"><span nid="{{ notification.id }}" class="noti-delete glyphicon glyphicon-remove"></span></a></div>
+            <div class="panel-body">{{ notification.verb }}</div>
+
+        </div>
+    {% endfor %}
+    
+    <script>
+{#        删除#}
+        $('.noti-delete').click(function (){
+            var nid = $(this).attr("nid");
+
+            $.ajax({
+                url:"{% url 'users:notifications' %}",
+                    type: "POST",
+                     data: {
+                         "nid":nid,
+                         "action":"delete",
+                         csrfmiddlewaretoken: '{{ csrf_token }}'
+                     },
+                    cache:false,
+                    dataType:'json',
+                success:function(data){
+                    if(data['status']=='ok'){
+                        $('.notification-item[nid='+nid+']').remove();
+                    }else{
+                        alert(data['reason']);
+                    }
+                },
+                error:function () {
+                    alert('出错！')
+                }
+            });
+        });
+        {#        读取详情#}
+        $('.read-notification').click(function () {
+            var nid = $(this).attr("nid");
+
+            $.ajax({
+                url:"{% url 'users:notifications' %}",
+                    type: "POST",
+                     data: {
+                         "nid":nid,
+                         "action":"read",
+                         csrfmiddlewaretoken: '{{ csrf_token }}'
+                     },
+                    cache:false,
+                    dataType:'json',
+                success:function(data){
+                    if(data['status']=='ok'){
+{#                        $('span.status[ ' +nid+']').empty()#}
+{#                        $('span.status[ ' +nid+']').append($('<span class="label label-success">已读</span>'));#}
+                        alert('消息已读');
+                    }else{
+                        alert(data['reason']);
+                    }
+                },
+                error:function () {
+                    alert('出错！')
+                }
+            });
+        });
+    </script>
+
+        <div class="pagination">
+            <span class="step-links">
+                {% if notifications.has_previous %}
+                    <a href="?page={{ notifications.previous_page_number }}">上一页</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ notifications.number }} of {{ notifications.paginator.num_pages }}.
+                </span>
+
+                {% if notifications.has_next %}
+                    <a href="?page={{ notifications.next_page_number }}">下一页</a>
+                {% endif %}
+            </span>
+        </div>
+
+    </div>
+
+{% endblock %}

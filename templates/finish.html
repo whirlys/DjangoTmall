@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}收货成功{% endblock %}
+
+{% block content %}
+<div class="orderFinishDiv">
+	<div class="orderFinishTextDiv">
+		<img src="{% static 'img/site/orderFinish.png' %}">
+		<span>交易已经成功，卖家将收到您的货款。</span>
+	</div>
+</div>
+
+
+{% endblock %}

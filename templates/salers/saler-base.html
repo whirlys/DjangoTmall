@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" >
+	<title>{% block title %}商家支持{% endblock %}</title>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery.toast.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'salers/css/saler-base.css' %}">
+
+
+    <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/jquery.toast.min.js' %}"></script>
+
+    {% block css_js %}{% endblock %}
+</head>
+<body>
+
+{% include 'salers/header.html' %}
+{% block content %}
+
+{% endblock %}
+</body>
+</html>

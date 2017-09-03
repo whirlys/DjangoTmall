@@ -1,0 +1,151 @@
+{% extends 'salers/amz/base.html' %}
+{% load staticfiles %}
+
+
+{% block title %}
+商品列表
+{% endblock %}
+
+
+
+{% block content %}
+
+<div class="admin-biaogelist">
+	
+    <div class="listbiaoti am-cf">
+      <ul class="am-icon-flag on"> 栏目名称</ul>
+      
+      <dl class="am-icon-home" style="float: right;"> 当前位置： 首页 > <a href="#">商品列表</a></dl>
+      
+      <dl>
+        <a href="{% url 'salers:productCreate' %}" class="am-btn am-btn-danger am-round am-btn-xs am-icon-plus"> 添加产品</a>
+      </dl>
+
+    </div>
+	
+	<div class="am-btn-toolbars am-btn-toolbar am-kg am-cf">
+  <ul>
+    <li>
+      <div class="am-btn-group am-btn-group-xs">
+        <select data-am-selected="{btnWidth: 90, btnSize: 'sm', btnStyle: 'default'}">
+          <option value="b">产品分类</option>
+          <option value="o">下架</option>
+        </select>
+      </div>
+    </li>
+    <li>
+      <div class="am-btn-group am-btn-group-xs">
+      <select data-am-selected="{btnWidth: 90, btnSize: 'sm', btnStyle: 'default'}">
+        <option value="b">产品分类</option>
+        <option value="o">下架</option>
+      </select>
+      </div>
+    </li>
+    <li style="margin-right: 0;">
+    	<span class="tubiao am-icon-calendar"></span>
+      <input type="text" class="am-form-field am-input-sm am-input-zm  am-icon-calendar" placeholder="开始日期" data-am-datepicker="{theme: 'success',}"  readonly/>
+    </li>
+       <li style="margin-left: -4px;">
+    	<span class="tubiao am-icon-calendar"></span>
+      <input type="text" class="am-form-field am-input-sm am-input-zm  am-icon-calendar" placeholder="开始日期" data-am-datepicker="{theme: 'success',}"  readonly/>
+    </li>
+    
+        <li style="margin-left: -10px;">
+      <div class="am-btn-group am-btn-group-xs">
+      <select data-am-selected="{btnWidth: 90, btnSize: 'sm', btnStyle: 'default'}">
+        <option value="b">产品分类</option>
+        <option value="o">下架</option>
+      </select>
+      </div>
+    </li>
+    <li><input type="text" class="am-form-field am-input-sm am-input-xm" placeholder="关键词搜索" /></li>
+    <li><button type="button" class="am-btn am-radius am-btn-xs am-btn-success" style="margin-top: -1px;">搜索</button></li>
+  </ul>
+</div>
+
+
+    <form class="am-form am-g">
+          <table width="100%" class="am-table am-table-bordered am-table-radius am-table-striped">
+            <thead>
+              <tr class="am-success">
+                    <th class="table-check"><input type="checkbox" /></th>
+                    <th class="">类别</th>
+                    <th class="table-id">ID</th>
+                    <th class="">编码</th>
+                    <th class="">名称</th>
+                    <th class="">品牌</th>
+                    <th class="">原始价格</th>
+                    <th class="">价格</th>
+                    <th class="">进货成本</th>
+                    <th class="">上架/下架</th>
+                    <th class="">库存量</th>
+                    <th class="">是否包邮</th>
+                    <th class="">销量</th>
+                    <th class="table-date am-hide-sm-only">修改日期</th>
+                    <th width="" class="table-set">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for product in products %}
+              <tr>
+                <td><input pid="{{ product.id }}" type="checkbox" /></td>
+                <td>{{ product.category }}</td>
+                <td>{{ product.id }}</td>
+                <td>{{ product.product_code }}</td>
+                <td>{{ product.product_name }}</td>
+               <td>{{ product.brand }}</td> {# <i class="am-icon-check am-text-warning"></i>#}
+                <td >{{ product.original_price }}</td>
+                  <td>{{ product.price }}</td>
+                  <td>{{ product.cost }}</td>
+                <td>{{ product.get_publish_status_display }}</td>
+                <td>{{ product.stock }}</td>
+                <td>{{ product.is_freeShipping }}</td>
+                <td >{{ product.sales }}</td>
+                <td >{{ product.updated }}</td>
+                <td><div class="am-btn-toolbar">
+                    <div class="am-btn-group am-btn-group-xs">
+                      <button class="am-btn am-btn-default am-btn-xs am-text-secondary am-round"><span class="am-icon-pencil-square-o"></span></button>
+                      <button class="am-btn am-btn-default am-btn-xs am-text-danger am-round"><span class="am-icon-trash-o"></span></button>
+                    </div>
+                  </div></td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+          
+             <div class="am-btn-group am-btn-group-xs">
+              <button type="button" class="am-btn am-btn-default"><span class="am-icon-plus"></span> 删除</button>
+              <button type="button" class="am-btn am-btn-default"><span class="am-icon-save"></span> 上架</button>
+              <button type="button" class="am-btn am-btn-default"><span class="am-icon-save"></span> 下架</button>
+              <button type="button" class="am-btn am-btn-default"><span class="am-icon-save"></span> 移动</button>
+              <button type="button" class="am-btn am-btn-default"><span class="am-icon-plus"></span> 新增</button>
+              <button type="button" class="am-btn am-btn-default"><span class="am-icon-save"></span> 保存</button>
+              <button type="button" class="am-btn am-btn-default"><span class="am-icon-archive"></span> 移动</button>
+              <button type="button" class="am-btn am-btn-default"><span class="am-icon-trash-o"></span> 删除</button>
+            </div>
+          
+          <ul class="am-pagination am-fr">
+            每页 10 条记录
+            {% if products.has_previous %}
+                <li ><a href="?page={{ products.previous_page_number }}">«上一页</a></li>
+            {% else %}
+                <li class="am-disabled"><a href="#">«上一页</a></li>
+            {% endif %}
+
+            <li class="am-active am-disabled"><a href="#">第 {{ products.number }} 页 / 总 {{ products.paginator.num_pages }} 页</a></li>
+
+            {% if products.has_next %}
+                <li ><a href="?page={{ products.next_page_number }}">下一页»</a></li>
+            {% else %}
+                <li class="am-disabled"><a href="#">下一页»</a></li>
+            {% endif %}
+
+        </ul>
+          <p>注：.....</p>
+        </form>
+
+
+
+</div>
+
+{% endblock %}

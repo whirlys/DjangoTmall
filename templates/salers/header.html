@@ -1,0 +1,22 @@
+{% load staticfiles %}
+<nav class="top ">
+        <a href="{% url 'index' %}">
+            <span class="glyphicon glyphicon glyphicon-home redColor"></span>
+            天猫首页
+        </a>
+
+        <span>喵，欢迎来天猫商家中心</span>
+        {% if not request.user.is_authenticated %}
+
+        {% else %}
+             {% load notifications_tags %}
+            {% notifications_unread as unread_count %}
+            <a href="#nowhere">{{ request.user.username }}</a>
+            <a href="{% url 'logout' %}">退出</a>
+        {% endif %}
+
+        <span class="pull-right">
+            <a href="{% url 'salers:salerSettled' %}">商家入口</a>
+        </span>
+
+</nav>

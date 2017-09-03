@@ -1,0 +1,200 @@
+{% extends 'salers/amz/base.html' %}
+{% load staticfiles %}
+{% block title %}添加新产品{% endblock %}
+
+{%  block css_js %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+    <link href="{% static 'fileinput/css/fileinput.css' %}" media="all" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'fileinput/themes/explorer/theme.css' %}" media="all" rel="stylesheet" type="text/css"/>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'fileinput/js/fileinput.js' %}" type="text/javascript"></script>
+    <script src="{% static 'fileinput/js/locales/zh.js' %}" type="text/javascript"></script>
+{% endblock %}
+
+{% block content %}
+<div class="admin-biaogelist">
+	
+    <div class="listbiaoti am-cf">
+      <ul class="am-icon-flag on"> 添加新产品</ul>
+      
+      <dl class="am-icon-home" style="float: right;"> 当前位置： 首页 > <a href="#">添加新产品</a></dl>
+      
+    </div>
+    {% if productForm.errors %}
+        <div class="alert alert-danger">上传失败！发生了一些错误或表单未填完整！</div>
+    {% endif %}
+    <div class="fbneirong">
+      <form class="am-form" action="" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+         <div class="am-form-group am-cf">
+          <div class="zuo">类别：</div>
+          <div class="you">
+              {{ productForm.category }}
+              {{ productForm.category.errors }}
+          </div>
+        </div>
+        <div class="am-form-group am-cf">
+          <div class="zuo">品牌：</div>
+          <div class="you">
+            {{ productForm.brand }}
+              {{ productForm.brand.errors }}
+          </div>
+        </div>
+        <div class="am-form-group am-cf">
+          <div class="zuo">名称：</div>
+          <div class="you">
+            {{ productForm.product_name }}
+              {{ productForm.product_name.errors }}
+          </div>
+        </div>
+        <div class="am-form-group am-cf">
+          <div class="zuo">小标题：</div>
+          <div class="you">
+              {{ productForm.subTitle }}
+              {{ productForm.subTitle.errors }}
+          </div>
+        </div>
+
+        <div class="am-form-group am-cf">
+          <div class="zuo">产品图片：</div>
+            <div class="you">
+                <input type="file" name="pimage" multiple="multiple" id="pimage">
+            </div>
+        </div>
+          <div class="am-form-group am-cf">
+              <div class="zuo">产品信息图片：</div>
+                <div class="you">
+                    <input type="file" name="dimage" multiple="multiple"  id="dimage">
+                </div>
+          </div>
+        <div class="am-form-group am-cf">
+          <div class="zuo">原始价格：</div>
+          <div class="you">
+            {{ productForm.original_price }}
+              {{ productForm.original_price.errors }}
+          </div>
+        </div>
+
+        <div class="am-form-group am-cf">
+          <div class="zuo">促销价格：</div>
+          <div class="you">
+                {{ productForm.price }}
+               {{ productForm.price.errors }}
+          </div>
+        </div>
+        <div class="am-form-group am-cf">
+          <div class="zuo">进货价格：</div>
+          <div class="you">
+                {{ productForm.cost }}
+              {{ productForm.cost.errors }}
+          </div>
+        </div>
+          <div class="am-form-group am-cf">
+              <div class="zuo">上下架状态：</div>
+              <div class="you">
+                    {{ productForm.publish_status }}
+                  {{ productForm.publish_status.errors }}
+              </div>
+          </div>
+          <div class="am-form-group am-cf">
+              <div class="zuo">描述：</div>
+              <div class="you">
+                    {{ productForm.description }}
+                    {{ productForm.description.errors }}
+              </div>
+          </div>
+          <div class="am-form-group am-cf">
+              <div class="zuo">是否包邮：</div>
+              <div class="you">
+                    {{ productForm.is_freeShipping }}
+                  {{ productForm.is_freeShipping.errors }}
+              </div>
+          </div>
+            <hr>
+{#          <div id="pclass">#}
+{##}
+{#          </div>#}
+
+          <div class="am-form-group am-cf">
+          <div class="you" style="margin-left: 11%;">
+{#              <button type="submit" class="am-btn am-btn-success am-radius">发布并关闭窗口</button>&nbsp;  &raquo; &nbsp; #}
+              <button type="submit" class="am-btn am-btn-secondary am-radius">下一步</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+<script>
+$(document).on('ready', function() {
+    $("#pimage").fileinput({
+        initialPreviewAsData: true,
+        overwriteInitial: true,
+        maxFileSize: 2000,
+{#        minFileCount: 3,   //上传的最少图片数量#}
+        maxFileCount: 10, /* 允许上传图片的最大数量*/
+        allowedPreviewTypes : [ 'image' ],
+        allowedFileExtensions:["jpg","png"],
+        language: "zh",
+        initialCaption:"图片轮播处，展示产品的图片",
+        showUpload: false,
+        uploadAsync: false,/* 取消异步上传 */
+        dropZoneEnabled: true,//是否显示拖拽区域
+        enctype: 'multipart/form-data',
+
+    });
+    $("#dimage").fileinput({
+        initialPreviewAsData: true,
+        overwriteInitial: true,
+        maxFileSize: 2000,
+{#        minFileCount: 3,   //上传的最少图片数量#}
+        maxFileCount: 10, /* 允许上传图片的最大数量*/
+        allowedPreviewTypes : [ 'image' ],
+        allowedFileExtensions:["jpg","png"],
+        language: "zh",
+        initialCaption:"商品详情处，介绍商品详情的图片",
+        showUpload: false,
+        uploadAsync: false,/* 取消异步上传 */
+        dropZoneEnabled: true,//是否显示拖拽区域
+        enctype: 'multipart/form-data',
+    });
+
+
+    $('#id_category').change(function(){
+        var cid = $(this).val();
+        $.ajax({
+            url:"{% url 'salers:getCategoryJson' %}",
+            type:"POST",
+            data:{
+                "cid":cid,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            cache:false,
+            dataType:'json',
+            success:function(data){
+                if(data['status']=='ok'){
+                    $('#id_brand').empty();   //清空
+                    $('#id_brand').append(
+                            $('<option value="" selected="selected">---------</option>')
+                    );
+                    $.each(data['brands'],function (index,item) {
+                        $('#id_brand').append(
+                            $('<option value="'+item["id"]+'">'+ item["name"]+'</option>')
+                        );
+                    });
+                }else if(data['status']=='no'){
+                    alert(JSON.stringify(data));
+                }
+            },
+            error:function () {
+                alert("ajax出错！")
+            }
+        });
+    });
+
+
+});
+</script>
+
+</div>
+
+{% endblock %}

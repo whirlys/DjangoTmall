@@ -1,0 +1,19 @@
+.errorlist{
+    /*border-color: #f00;*/
+    /*box-shadow: 0 0 5px #aa0b0b;*/
+    color: red;
+}
+
+nav.top{
+	background-color: #f2f2f2;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	border-bottom:1px solid  #e7e7e7;
+}
+nav.top span, nav.top a{
+	color: #999;
+	margin: 0px 10px 0px 10px;
+}
+nav.top a:hover{
+	color: #C40000;
+}
